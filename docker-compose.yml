@@ -1,0 +1,31 @@
+version: "3"
+services:
+    db:
+        container_name: dbapp
+        image: postgres:14.0
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
+        volumes:
+            - "./build/0001-init-pg.sh:/docker-entrypoint-initdb.d/0001-init-pg.sh"
+        ports:
+            - 5432:5432
+    app:
+        container_name: goapp
+        image: golang:1.17.3-stretch
+        working_dir: /
+        volumes:
+            - "./:/source"
+            - gomodules:/go/pkg/mod
+        ports:
+            - 8000:8000
+        command: sleep 365d
+
+
+volumes:
+    gomodules:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: $HOME/go/pkg/mod         
